@@ -1,0 +1,60 @@
+{
+  "name": "write-good-as-promised",
+  "version": "0.1.0",
+  "description": "Naive linter for English prose",
+  "main": "write-good-as-promised.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/noahlange/write-good-as-promised.git"
+  },
+  "bin": {
+    "write-good": "bin/write-good-as-promised.js"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "jasmine-node test"
+  },
+  "keywords": [
+    "english",
+    "writing",
+    "prose",
+    "words"
+  ],
+  "author": {
+    "name": "Brian Ford"
+  },
+  "contributors": [
+    {
+      "name": "Noah Lange",
+      "url": "http://noahlange.com"
+    }
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "adverb-where": "~0.0.0",
+    "buzzwords": "^0.3.0",
+    "fillers": "^0.2.2",
+    "frankenword": "0.0.2",
+    "hedges": "^0.3.0",
+    "no-cliches": "~0.1.0",
+    "passive-voice": "~0.0.0",
+    "too-wordy": "~0.1.0",
+    "weasel-words": "~0.1.0",
+    "wgap-datalist": "noahlange/wgap-datalist",
+    "wgap-flesch-kincaid": "noahlange/wgap-flesch-kincaid"
+  },
+  "bugs": {
+    "url": "https://github.com/noahlange/write-good-as-promised/issues"
+  },
+  "_npmVersion": "2.5.1",
+  "_nodeVersion": "4.0.0",
+  "maintainers": [
+    {
+      "name": "noahlange",
+      "email": "noahrlange@gmail.com",
+      "url": "http://noahlange.com"
+    }
+  ]
+}
