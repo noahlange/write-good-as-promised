@@ -46,40 +46,39 @@ module.exports = function (text, opts) {
   return new Promise((resolve, reject) => {
     
     // Go ahead and resolve if we haven't been given any text.
-    if (text === undefined) {
+    if (text === undefined || text === '') {
       resolve([]);
+    } else {
+      opts = opts || {};
+      var suggestions = Object.keys(checks)
+        .filter(check => {
+          return opts[check] !== false;
+        }).map(check => {
+          return new Promise((resolve, reject) => {
+            var res = checks[check].fn(text, opts[check]);
+            Promise.resolve(res)
+              .then(items => {
+                var reasoned = items
+                  .map(reasonable(checks[check].explanation))
+                  .map(suggestion => {
+                    suggestion.type = check;
+                    return suggestion;
+                  });
+                resolve(reasoned);
+              });
+          });
+        });
+      Promise.all(suggestions)
+        .then(suggestions => {
+          var reduced = suggestions.reduce((prev, curr) => {
+            return prev.concat(curr);
+          });
+          var out = dedup(reduced).sort((a, b) => {
+            return a.index < b.index ? -1 : 1;
+          });
+          resolve(out);
+        });
     }
-    
-    opts = opts || {};
-    var suggestions = Object.keys(checks)
-      .filter(check => {
-        return opts[check] !== false;
-      }).map(check => {
-        return new Promise((resolve, reject) => {
-          var res = checks[check].fn(text, opts[check]);
-          Promise.resolve(res)
-            .then(items => {
-              var reasoned = items
-                .map(reasonable(checks[check].explanation))
-                .map(suggestion => {
-                  suggestion.type = check;
-                  return suggestion;
-                });
-              resolve(reasoned);
-            });
-        });
-      });
-
-    Promise.all(suggestions)
-      .then(suggestions => {
-        var reduced = suggestions.reduce((prev, curr) => {
-          return prev.concat(curr);
-        });
-        var out = dedup(reduced).sort((a, b) => {
-          return a.index < b.index ? -1 : 1;
-        });
-        resolve(out);
-      });
   });
 }
 
