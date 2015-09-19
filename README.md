@@ -1,6 +1,9 @@
 # Write Good (As Promised)
 
-Naive linter for English prose for developers who can't write good and wanna learn to do other stuff good too. (Now with Promises and ES6, a few more checks, and without tests, because I need to rewrite them.)
+[![Build Status](https://travis-ci.org/noahlange/write-good-as-promised.svg?branch=master)](https://travis-ci.org/noahlange/write-good-as-promised)
+[![Coverage Status](https://coveralls.io/repos/noahlange/write-good-as-promised/badge.svg?branch=master&service=github)](https://coveralls.io/github/noahlange/write-good-as-promised?branch=master)
+
+Naive linter for English prose for developers who can't write good and wanna learn to do other stuff good too. (Now with Promises and ES6 and a few more checks.)
 
 ## Use
 ```shell
@@ -24,10 +27,10 @@ writeGood('So the cat was stolen.')
   
 // [{
 //   suggestion: "omit 'So' from the beginning of sentences",
-//   index: 0, offset: 2
+//   index: 0, offset: 2, type: [ 'so' ]
 // }, {
 //   suggestion: "'was stolen' is passive voice",
-//   index: 11, offset: 10
+//   index: 11, offset: 10, type: [ 'passiveVoice' ]
 // }]
 
 ```
@@ -60,7 +63,7 @@ writeGood(text)
 
 // []
 
-writeGood(text, { fleschKincaid: { level: 10 } })
+writeGood(text, { readability: { level: 10 } })
   .then(suggestions => {
     console.log(suggestions);
   });
@@ -69,44 +72,9 @@ writeGood(text, { fleschKincaid: { level: 10 } })
 //    index: 0,
 //    offset: 83,
 //    reason: ""The Australian platypus is seemingly a hybrid of mammalian and r..." has a Flesch-Kincaid readibility score is 11.265.",
-//    type: 'fleschKincaid'
+//    type: ['readability']
 //  }]
 ``` 
-
-## CLI
-You can use `write-good` as a command-line tool by installing it globally:
-
-```shell
-npm install -g write-good
-```
-
-`write-good` takes a [glob](https://github.com/isaacs/node-glob) and prints suggestions to stdout:
-
-```shell
-$ write-good *.md
-
-In README.md
-=============
- = writeGood('So the cat was stolen.');
-                         ^^^^^^^^^^
-"was stolen" is passive voice on line 20 at column 40
--------------
-//   suggestion: "'was stolen' is passive voice",
-                   ^^^^^^^^^^
-"was stolen" is passive voice on line 28 at column 19
-```
-
-You can run just specific checks like this:
-
-```shell
-write-good *.md --weasel --so
-```
-
-Or exclude checks like this:
-
-```shell
-write-good *.md --no-passive
-```
 
 ## Checks
 You can disable any combination of the following by providing a key with value `false` as the second argument to `writeGood`.
@@ -123,14 +91,13 @@ You can disable any combination of the following by providing a key with value `
 | `cliches`       | Checks for common cliches                                              | no-cliches          |
 | `frankenwords`  | Checks for 'frankenwords'                                              | frankenword         |
 | `fleschKincaid` | Checks for sentence readability.                                       | wgap-flesch-kincaid |
-| `spelling`      | Checks for spelling errors.                                            | wgap-spelling       |
 | `filler`        | Checks for filler words: like, frankly, just, etc.                     | fillers             |
 | `hedge`         | Checks for hedge words: basically, appears to be, clearly, etc.        | hedges              |
 | `buzzword`      | Checks for buzzwords: synergy, big data, devops, etc.                  | buzzwords           |
 
 ## See also
 
-I came across these resources while doing research to make this module.
+The author of the original module came across these resources while doing research to make this module.
 They might be helpful.
 
 ### Code
