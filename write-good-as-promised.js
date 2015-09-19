@@ -9,7 +9,7 @@ var checks = {
   adverb: { fn: require('adverb-where'), explanation: 'can weaken meaning' },
   wordy: { fn: require('too-wordy'), explanation: 'is wordy or unneeded' },
   cliche: { fn: require('no-cliches'), explanation: 'is a cliche' },
-  fleschKincaid: { fn: require('wgap-flesch-kincaid'), explanation: '' },
+  readability: { fn: require('wgap-flesch-kincaid') },
   frankenword: { fn: require('frankenword'), explanation: 'is ghastly' },
   buzzword: { fn: dl(require('buzzwords')), explanation: 'is a buzzword' },
   filler: { fn: dl(require('fillers')), explanation: 'is filler' },
@@ -18,6 +18,7 @@ var checks = {
 
 module.exports = function (text, opts) {
 
+  // Generate a reason for a suggestion, truncated appropriately.  
   function reasonable(reason) {
     return suggestion => {
       var txt = text.substr(suggestion.index, suggestion.offset);
@@ -27,6 +28,7 @@ module.exports = function (text, opts) {
     };
   }
 
+  // Concatenate reasons for passages with multiple errors.
   function dedup(suggestions) {
     var dupsHash = {};
     return suggestions.reduce((memo, suggestion) => {
@@ -42,6 +44,12 @@ module.exports = function (text, opts) {
   }
 
   return new Promise((resolve, reject) => {
+    
+    // Go ahead and resolve if we haven't been given any text.
+    if (text === '') {
+      resolve([]);
+    }
+    
     opts = opts || {};
     var suggestions = Object.keys(checks)
       .filter(check => {

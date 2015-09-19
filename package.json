@@ -13,9 +13,6 @@
   "directories": {
     "test": "test"
   },
-  "scripts": {
-    "test": "jasmine-node test"
-  },
   "keywords": [
     "english",
     "writing",
