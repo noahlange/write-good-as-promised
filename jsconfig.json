@@ -1,10 +1,5 @@
 {
   "compilerOptions": {
     "target": "es6"
-  },
-  "files": [
-    "./lib/spelling.js",
-    "./write-good.js",
-    "./lib/flesch-kincaid.js"
-  ]
+  }
 }

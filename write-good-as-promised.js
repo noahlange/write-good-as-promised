@@ -16,32 +16,36 @@ var checks = {
   hedge: { fn: dl(require('hedges')), explanation: 'is a hedge word' }
 };
 
+// Generate a reason for a suggestion, truncated appropriately.  
+function reasonable(text) {
+  return suggestion => {
+    var txt = text.substr(suggestion.index, suggestion.offset);
+    var truncated = txt.length > 64 ? txt.substr(0, 64) + '...' : txt;
+    var suggType = suggestion.type[0];
+    var explanation = checks[suggType].explanation;
+    suggestion.reason = `"${ truncated }" ${ (suggestion.reason || explanation) }`;
+    return suggestion;
+  };
+}
+
+// Concatenate reasons for passages with multiple errors.
+function dedup (suggestions) {
+  var dupsHash = {};
+  return suggestions.reduce(function(memo, suggestion) {
+    var key = suggestion.index + ":" + suggestion.offset;
+    if (!dupsHash[key]) {
+      dupsHash[key] = suggestion;
+      memo.push(suggestion);
+    } else {
+      var substring = suggestion.reason.substring(suggestion.offset + 3);
+      dupsHash[key].reason += " and " + substring;
+      dupsHash[key].type.push(suggestion.type[0]);
+    }
+    return memo;
+  }, []);
+}
+
 module.exports = function (text, opts) {
-
-  // Generate a reason for a suggestion, truncated appropriately.  
-  function reasonable(reason) {
-    return suggestion => {
-      var txt = text.substr(suggestion.index, suggestion.offset);
-      var truncated = txt.length > 64 ? txt.substr(0, 64) + '...' : txt;
-      suggestion.reason = `"${ truncated }" ${ (reason || suggestion.reason) }`;
-      return suggestion;
-    };
-  }
-
-  // Concatenate reasons for passages with multiple errors.
-  function dedup(suggestions) {
-    var dupsHash = {};
-    return suggestions.reduce((memo, suggestion) => {
-      var key = suggestion.index + ':' + suggestion.offset;
-      if (!dupsHash[key]) {
-        dupsHash[key] = suggestion;
-        memo.push(suggestion);
-      } else {
-        dupsHash[key].reason += ' and ' + suggestion.reason.substring(suggestion.offset + 3);
-      }
-      return memo;
-    }, []);
-  }
 
   return new Promise((resolve, reject) => {
     
@@ -59,11 +63,11 @@ module.exports = function (text, opts) {
             Promise.resolve(res)
               .then(items => {
                 var reasoned = items
-                  .map(reasonable(checks[check].explanation))
                   .map(suggestion => {
-                    suggestion.type = check;
+                    suggestion.type = [ check ];
                     return suggestion;
-                  });
+                  })
+                  .map(reasonable(text))
                 resolve(reasoned);
               });
           });
@@ -82,4 +86,5 @@ module.exports = function (text, opts) {
   });
 }
 
-module.exports.annotate = require('./lib/annotate');
+module.exports.reasonable = reasonable;
+module.exports.dedup = dedup;
