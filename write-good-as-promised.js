@@ -46,7 +46,7 @@ module.exports = function (text, opts) {
   return new Promise((resolve, reject) => {
     
     // Go ahead and resolve if we haven't been given any text.
-    if (text === '') {
+    if (text === undefined) {
       resolve([]);
     }
     
